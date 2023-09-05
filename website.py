@@ -187,14 +187,15 @@ class WebsiteWindow(QMainWindow):
     def save_websites(self):
         # 创建一个消息框,上面有俩按钮:Yes 和 No。
         reply = QMessageBox.question(self, 'Message',
-                                     'Would you like to save the changes?', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-        # 判断返回值，如果点击的是 Yes 按钮，就保存已有改变，否则忽略该事件。
-        if reply == QMessageBox.Yes:
+                                    'Would you like to save the changes?', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Yes)
+        # 判断返回值
+        if reply == QMessageBox.Cancel:
+            return False
+        elif reply == QMessageBox.Yes:
             with open(self.file_path, 'w') as json_file:
                 json.dump(self.websites, json_file,
                           ensure_ascii=False, indent=4)
-        else:
-            pass
+        return True
 
     # 窗口居中
     def center(self):

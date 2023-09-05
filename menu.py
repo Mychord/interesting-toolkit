@@ -234,6 +234,16 @@ class MenuWindow(QMainWindow):
         self.music_state_label.setStyleSheet(
             '''QLabel{background:mediumaquamarine;border-radius:5px;}''')
 
+    # 窗口居中
+    def center(self):
+        # 获得主窗口所在的框架
+        qr = self.frameGeometry()
+        # 获取显示器的分辨率,然后得到屏幕中间点的位置
+        cp = QDesktopWidget().availableGeometry().center()
+        # 通过move函数把主窗口的左上角移动到其框架的左上角,使得窗口居中
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     # 打开番茄时钟界面
     def on_tomato_clock_button(self):
         pass
@@ -245,16 +255,6 @@ class MenuWindow(QMainWindow):
     # 打开精品网站界面
     def on_website_buttion(self):
         pass
-
-    # 窗口居中
-    def center(self):
-        # 获得主窗口所在的框架
-        qr = self.frameGeometry()
-        # 获取显示器的分辨率,然后得到屏幕中间点的位置
-        cp = QDesktopWidget().availableGeometry().center()
-        # 通过move函数把主窗口的左上角移动到其框架的左上角,使得窗口居中
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
 
     # 按下关闭程序按钮
     def on_exit_button(self):

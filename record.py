@@ -110,8 +110,8 @@ class RecordWindow(QMainWindow):
         new_text_edit.setFixedHeight(54)
         new_text_edit.setSizePolicy(
             QSizePolicy.Expanding, QSizePolicy.Expanding)
-        
-        index = len(self.records) 
+
+        index = len(self.records)
         # 直接连接信号和槽
         new_delete_button.clicked.connect(
             lambda: self.on_delete_button(index))
@@ -135,7 +135,7 @@ class RecordWindow(QMainWindow):
         def reconnect(item, number):
             item.clicked.disconnect()
             item.clicked.connect(lambda: self.on_delete_button(number))
-        
+
         # 创建一个消息框,上面有俩按钮:Yes和No。
         reply = QMessageBox.question(self, 'Message',
                                      "Are you sure to delete this message?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -156,14 +156,15 @@ class RecordWindow(QMainWindow):
     def save_records(self):
         # 创建一个消息框,上面有俩按钮:Yes 和 No。
         reply = QMessageBox.question(self, 'Message',
-                                     'Would you like to save the changes?', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-        # 判断返回值，如果点击的是 Yes 按钮，就保存已有改变，否则忽略该事件。
-        if reply == QMessageBox.Yes:
+                                     'Would you like to save the changes?', QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Yes)
+        # 判断返回值
+        if reply == QMessageBox.Cancel:
+            return False
+        elif reply == QMessageBox.Yes:
             with open(self.file_path, 'w') as json_file:
                 json.dump([record.toPlainText() for record in self.records], json_file,
                           ensure_ascii=False, indent=4)
-        else:
-            pass
+        return True
 
     # 加载已有日程
     def load_records(self):

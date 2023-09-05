@@ -34,7 +34,7 @@ class MenuWindowImprove(MenuWindow, QMainWindow):
             app.quit()
         else:
             pass
-        
+
     # 打开番茄时钟界面
     def on_tomato_clock_button(self):
         change_window(2)
@@ -63,8 +63,8 @@ class RecordWindowImprove(RecordWindow, QMainWindow):
 
     # 返回主界面
     def back_event(self, event):
-        self.save_records()
-        change_window(1)
+        if self.save_records():
+            change_window(1)
 
 
 class WebsiteWindowImprove(WebsiteWindow, QMainWindow):
@@ -73,8 +73,8 @@ class WebsiteWindowImprove(WebsiteWindow, QMainWindow):
 
     # 返回主界面
     def back_event(self, event):
-        self.save_websites()
-        change_window(1)
+        if self.save_websites():
+            change_window(1)
 
 
 def show_window(type):
