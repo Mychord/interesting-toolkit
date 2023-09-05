@@ -32,9 +32,6 @@ class WebsiteWindow(QMainWindow):
         self.save_button = QPushButton('保存', self)
         self.back_button = QPushButton('返回', self)
 
-        # 文本编辑框
-        self.textEdit = QTextEdit()
-
         # 按钮样式设置
         self.create_button.setFixedSize(40, 40)
         self.back_button.setFixedSize(40, 40)
@@ -69,6 +66,7 @@ class WebsiteWindow(QMainWindow):
         self.save_button.clicked.connect(self.save_websites)
         self.back_button.clicked.connect(self.back_event)
 
+    # 初始化数据
     def init_data(self):
         # 数据文件路径
         self.file_path = './resource/datas/websites.json'
@@ -167,8 +165,8 @@ class WebsiteWindow(QMainWindow):
         return False
 
     # 按下删除按钮
-    def on_delete_button(self, index, item1, item2):
-        self.delete_event(self, index, item1, item2)
+    def on_delete_button(self, website, item1, item2):
+        self.delete_event(self, website, item1, item2)
 
     # 删除确认
     def delete_event(self, event, website, item1, item2):
@@ -185,21 +183,18 @@ class WebsiteWindow(QMainWindow):
         else:
             pass
 
-    # 按下保存按钮
+    # 保存网站
     def save_websites(self):
         # 创建一个消息框,上面有俩按钮:Yes 和 No。
         reply = QMessageBox.question(self, 'Message',
                                      'Would you like to save the changes?', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         # 判断返回值，如果点击的是 Yes 按钮，就保存已有改变，否则忽略该事件。
         if reply == QMessageBox.Yes:
-            self.save_file()
+            with open(self.file_path, 'w') as json_file:
+                json.dump(self.websites, json_file,
+                          ensure_ascii=False, indent=4)
         else:
             pass
-
-    # 保存网站
-    def save_file(self):
-        with open(self.file_path, 'w') as json_file:
-            json.dump(self.websites, json_file, ensure_ascii=False, indent=4)
 
     # 窗口居中
     def center(self):

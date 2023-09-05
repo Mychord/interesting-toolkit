@@ -4,9 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5 import sip
-
-# 日程条数
-record_number = 0
+import json
 
 
 class RecordWindow(QMainWindow):
@@ -19,7 +17,7 @@ class RecordWindow(QMainWindow):
         self.init_signal_slot()
 
         # 载入已有信息
-        self.load_messages()
+        self.init_data()
 
         # 设置标题
         self.setWindowTitle("日程")
@@ -68,13 +66,24 @@ class RecordWindow(QMainWindow):
     # 将信号与槽关联
     def init_signal_slot(self):
         self.create_record_button.clicked.connect(self.create_record)
+        self.save_button.clicked.connect(self.save_records)
         self.back_button.clicked.connect(self.back_event)
+
+    # 初始化数据
+    def init_data(self):
+        # 数据文件路径
+        self.file_path = './resource/datas/records.json'
+        # 数据
+        self.records = []
+        # 删除按钮
+        self.delete_buttons = []
+        # 载入网站
+        self.load_records()
 
     # 创造新的日程
     def create_record(self):
-        global record_number
         # 日程总数大于12条则跳过
-        if record_number >= 12:
+        if len(self.records) >= 12:
             reply = QMessageBox.question(self, 'information',
                                          "最多存在12条日程",
                                          QMessageBox.Ok, QMessageBox.Ok)
@@ -82,61 +91,87 @@ class RecordWindow(QMainWindow):
             if reply == QMessageBox.Ok:
                 pass
         else:
-            # 删除按钮等
-            new_delete_button = QPushButton("删除")
-            new_text_edit = QTextEdit()
+            self.build_record('')
 
-            # 增加提示词
-            QToolTip.setFont(QFont('SansSerif', 10))
-            new_delete_button.setToolTip('单击按钮删除该条日程')
+    # 日程记录 UI 界面建立
+    def build_record(self, record):
+        # 删除按钮等
+        new_delete_button = QPushButton("删除")
+        new_text_edit = QTextEdit()
 
-            # 样式设置
-            new_delete_button.setFixedHeight(54)
-            new_text_edit.setFont(QFont('SansSerif', 11))
-            new_text_edit.setFixedHeight(54)
-            new_text_edit.setSizePolicy(
-                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # 增加提示词
+        QToolTip.setFont(QFont('SansSerif', 10))
+        new_delete_button.setToolTip('单击按钮删除该条日程')
 
-            # 直接连接信号和槽
-            new_delete_button.clicked.connect(
-                lambda: self.on_delete_button(new_delete_button, new_text_edit))
+        # 样式设置
+        new_delete_button.setFixedHeight(54)
+        new_text_edit.setFont(QFont('SansSerif', 11))
+        new_text_edit.setPlainText(record)
+        new_text_edit.setFixedHeight(54)
+        new_text_edit.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
+        index = len(self.records) 
+        # 直接连接信号和槽
+        new_delete_button.clicked.connect(
+            lambda: self.on_delete_button(index))
 
-            # 将文本框与和删除按钮合成一行
-            new_hlayout = QHBoxLayout()
-            new_hlayout.addWidget(new_text_edit)
-            new_hlayout.addWidget(new_delete_button)
+        # 将文本框与和删除按钮合成一行
+        new_hlayout = QHBoxLayout()
+        new_hlayout.addWidget(new_text_edit)
+        new_hlayout.addWidget(new_delete_button)
 
-            self.vLayout.addLayout(new_hlayout)
-            self.vLayout.setSpacing(10)
-            record_number += 1  # 日程条数加一
+        self.vLayout.addLayout(new_hlayout)
+        self.vLayout.setSpacing(10)
+        self.records.append(new_text_edit)
+        self.delete_buttons.append(new_delete_button)
 
     # 按下删除按钮
-    def on_delete_button(self, item1, item2):
-        self.delete_event(self, item1, item2)
+    def on_delete_button(self, index):
+        self.delete_event(self, index)
 
     # 删除确认
-    def delete_event(self, event, item1, item2):
+    def delete_event(self, event, index):
+        def reconnect(item, number):
+            item.clicked.disconnect()
+            item.clicked.connect(lambda: self.on_delete_button(number))
+        
         # 创建一个消息框,上面有俩按钮:Yes和No。
         reply = QMessageBox.question(self, 'Message',
                                      "Are you sure to delete this message?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         # 判断返回值，如果点击的是Yes按钮，就删除这条日程，否则忽略该事件。
         if reply == QMessageBox.Yes:
-            global record_number
+            item1 = self.records.pop(index)
+            item2 = self.delete_buttons.pop(index)
             self.vLayout.removeWidget(item1)  # 移除控件
             self.vLayout.removeWidget(item2)  # 移除控件
             sip.delete(item1)  # 彻底删除控件
             sip.delete(item2)  # 彻底删除控件
-            record_number -= 1  # 总日程数减一
+            for index, item in enumerate(self.delete_buttons):
+                reconnect(item, index)
         else:
             pass
 
     # 保存日程
-    def save_file(self):
-        pass
+    def save_records(self):
+        # 创建一个消息框,上面有俩按钮:Yes 和 No。
+        reply = QMessageBox.question(self, 'Message',
+                                     'Would you like to save the changes?', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        # 判断返回值，如果点击的是 Yes 按钮，就保存已有改变，否则忽略该事件。
+        if reply == QMessageBox.Yes:
+            with open(self.file_path, 'w') as json_file:
+                json.dump([record.toPlainText() for record in self.records], json_file,
+                          ensure_ascii=False, indent=4)
+        else:
+            pass
 
     # 加载已有日程
-    def load_messages(self):
-        pass
+    def load_records(self):
+        # 使用 json.load() 方法读取 JSON 文件并将其转换为 Python 对象
+        with open(self.file_path, 'r') as json_file:
+            datas = json.load(json_file)
+        for data in datas:
+            self.build_record(data)
 
     # 窗口居中
     def center(self):

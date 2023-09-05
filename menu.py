@@ -15,6 +15,7 @@ music_array = glob('./resource/music/*.mp3')
 
 pygame.mixer.init()
 
+
 class MenuWindow(QMainWindow):
     def __init__(self):
         super(MenuWindow, self).__init__()
@@ -158,7 +159,8 @@ class MenuWindow(QMainWindow):
         self.website_button.clicked.connect(self.on_website_buttion)
         self.play_music_button.clicked.connect(self.on_play_music_button)
         self.pause_music_button.clicked.connect(self.on_pause_music_button)
-        self.continue_music_button.clicked.connect(self.on_continue_music_button)
+        self.continue_music_button.clicked.connect(
+            self.on_continue_music_button)
         # 通过调用槽函数来刷新时间
         self.timer.timeout.connect(
             lambda: self.show_current_time(self.time_label))

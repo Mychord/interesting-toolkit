@@ -63,19 +63,8 @@ class RecordWindowImprove(RecordWindow, QMainWindow):
 
     # 返回主界面
     def back_event(self, event):
-        # 创建一个消息框,上面有俩按钮:Yes 和 No
-        reply = QMessageBox.question(self, 'Message',
-                                     'Have you saved the messages?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        # 如果已经保存，则返回主界面，否则进一步提醒
-        if reply == QMessageBox.Yes:
-            change_window(1)
-        else:
-            reply_s = QMessageBox.question(self, 'Message',
-                                           'Are you sure to leave?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-            if reply_s == QMessageBox.Yes:
-                change_window(1)
-            else:
-                pass
+        self.save_records()
+        change_window(1)
 
 
 class WebsiteWindowImprove(WebsiteWindow, QMainWindow):
@@ -84,14 +73,7 @@ class WebsiteWindowImprove(WebsiteWindow, QMainWindow):
 
     # 返回主界面
     def back_event(self, event):
-        # 创建一个消息框,上面有俩按钮:Yes 和 No
-        reply = QMessageBox.question(self, 'Message',
-                                     'Would you like to save the changes?', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-        # 如果已经保存，则返回主界面，否则进一步提醒
-        if reply == QMessageBox.Yes:
-            self.save_file()
-        else:
-            pass
+        self.save_websites()
         change_window(1)
 
 
