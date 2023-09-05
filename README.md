@@ -6,7 +6,6 @@
 ## 有趣工具箱
 - 番茄时钟 + 日程 + 精品网站
 - 界面切换、图片切换、音乐播放
-- 压缩包`有趣工具箱.zip`中是可执行文件
 - 添加音乐 --> resource/music/
 - 添加图片 --> resource/pictures/
 - 打包命令 --> pyinstaller --onefile --noconsole main.py
