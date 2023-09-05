@@ -256,21 +256,11 @@ class MenuWindow(QMainWindow):
 
     # 按下关闭程序按钮
     def on_exit_button(self):
-        self.close_event(self)
+        self.exit_event(self)
 
     # 关闭确认
-    def close_event(self, event):
-        # 创建一个消息框,上面有俩按钮:Yes 和 No
-        reply = QMessageBox.question(self, 'Message',
-                                     'Are you sure to quit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        # 判断返回值,如果点击的是 Yes 按钮,就关闭组件和应用,否则就忽略关闭事件
-        if reply == QMessageBox.Yes:
-            # 创建应用程序对象
-            app = QApplication.instance()
-            # 退出应用程序
-            app.quit()
-        else:
-            pass
+    def exit_event(self, event):
+        pass
 
     # 获取当前时间
     def show_current_time(self, time_label):

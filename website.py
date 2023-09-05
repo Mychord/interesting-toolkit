@@ -79,8 +79,8 @@ class WebsiteWindow(QMainWindow):
 
     # 创造新的网站记录
     def create_website(self):
-        self.websitename = ''
-        self.websiteaddress = ''
+        self.website_name = ''
+        self.website_address = ''
         # 网站总数大于20个则不再增加
         if len(self.websites) >= 20:
             reply = QMessageBox.question(self, 'information',
@@ -91,7 +91,7 @@ class WebsiteWindow(QMainWindow):
                 pass
         elif self.input_website() == True:
             website = '网站:{name}  <a href="{address}">点击打开查看</a>'.format(
-                name=self.websitename, address=self.websiteaddress)
+                name=self.website_name, address=self.website_address)
             self.build_website(website)
         else:
             pass
@@ -161,8 +161,8 @@ class WebsiteWindow(QMainWindow):
                     if reply == QMessageBox.Ok:
                         pass
                     return False
-                self.websitename = str(text1)
-                self.websiteaddress = str(text2)
+                self.website_name = str(text1)
+                self.website_address = str(text2)
                 return True
         return False
 
@@ -211,10 +211,6 @@ class WebsiteWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    # 按下返回按钮
-    def back_event(self):
-        self.back_event(self)
-
-    # 返回确认
+    # 返回主界面
     def back_event(self, event):
         pass

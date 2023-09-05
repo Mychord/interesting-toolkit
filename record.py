@@ -148,10 +148,6 @@ class RecordWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    # 按下返回按钮
-    def back_event(self):
-        self.back_event(self)
-
     # 返回确认
     def back_event(self, event):
         pass
